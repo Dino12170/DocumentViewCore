@@ -17,14 +17,14 @@ namespace DocumentViewCore.Controllers
 
         public IActionResult Index()
         {
-            var uploadPath = Path.Combine(_environment.WebRootPath, "uploads");
+            var uploadPathFolder = Path.Combine(_environment.WebRootPath, "uploads");
 
-            if (!Directory.Exists(uploadPath))
+            if (!Directory.Exists(uploadPathFolder))
             {
-                Directory.CreateDirectory(uploadPath);
+                Directory.CreateDirectory(uploadPathFolder);
             }
 
-            var folders = Directory.GetDirectories(uploadPath).Select(Path.GetFileName).ToList();
+            var folders = Directory.GetDirectories(uploadPathFolder).Select(Path.GetFileName).ToList();
             ViewBag.Folders = folders;
 
             return View();
@@ -43,6 +43,9 @@ namespace DocumentViewCore.Controllers
             ViewBag.Files = files;
             ViewBag.CurrentFolder = folderName;
 
+            var uploadPathFolder = Path.Combine(_environment.WebRootPath, "uploads");
+            var folders = Directory.GetDirectories(uploadPathFolder).Select(Path.GetFileName).ToList();
+            ViewBag.Folders = folders;
             return View();
         }
     }
