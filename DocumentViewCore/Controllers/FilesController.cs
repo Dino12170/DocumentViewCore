@@ -95,35 +95,5 @@ namespace DocumentViewCore.Controllers
                 presentation.Save(pdfPath, Aspose.Slides.Export.SaveFormat.Pdf);
             }
         }
-
-        //public IActionResult ViewFile(string folderName, string fileName)
-        //{
-        //    var filePath = Path.Combine(_environment.WebRootPath, "uploads", folderName, fileName);
-        //    var fileType = Path.GetExtension(filePath).ToLower();
-
-        //    if (!System.IO.File.Exists(filePath))
-        //    {
-        //        return Content("File không tồn tại.");
-        //    }
-
-        //    if (fileType == ".pdf")
-        //    {
-        //        return PhysicalFile(filePath, "application/pdf");
-        //    }
-        //    else if (fileType == ".jpg" || fileType == ".jpeg")
-        //    {
-        //        return PhysicalFile(filePath, "image/jpeg");
-        //    }
-        //    else if (fileType == ".png")
-        //    {
-        //        return PhysicalFile(filePath, "image/png");
-        //    }
-        //    else if (fileType == ".mp4")
-        //    {
-        //        return PhysicalFile(filePath, "video/mp4");
-        //    }
-
-        //    return Content("File format not supported for preview.");
-        //}
     }
 }

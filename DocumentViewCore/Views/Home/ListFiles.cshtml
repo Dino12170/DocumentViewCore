@@ -1,16 +1,48 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@{
+﻿@{
     ViewData["Title"] = "Files in @ViewBag.CurrentFolder";
 }
 
-<h1>Danh sách Files trong @ViewBag.CurrentFolder</h1>
-<ul>
-    @foreach (var file in ViewBag.Files)
-    {
-        <li><a href="@Url.Action("ViewFile", "Files", new { folderName = ViewBag.CurrentFolder, fileName = file })">@file</a></li>
-    }
-</ul>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .file-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+            .file-card:hover {
+                background-color: #f5f5f5;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h1>List File in: @ViewBag.CurrentFolder</h1>
+
+        <div class="row">
+            @foreach (var file in ViewBag.Files)
+            {
+                <div class="col-md-3 mb-4">
+                    <div class="file-card">
+                        <h4>@file</h4>
+                        <a href="@Url.Action("ViewFile", "Files", new { folderName = ViewBag.CurrentFolder, fileName = file })" class="btn btn-info btn-sm">View</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
