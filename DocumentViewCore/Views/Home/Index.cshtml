@@ -1,23 +1,11 @@
-﻿// Views
-// Views/Home/Index.cshtml
-@{ ViewData["Title"] = "Google Drive Clone";
-                var files = ViewBag.Files as List<string>; }
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
 
-<h1>Google Drive Clone</h1>
-
-<form asp-controller="Files" asp-action="Upload" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" />
-    <button type="submit">Upload</button>
-</form>
-
-<h2>Uploaded Files:</h2>
+<h1>Danh sách Thư Mục</h1>
 <ul>
-    @if (files != null)
+    @foreach (var folder in ViewBag.Folders)
     {
-        foreach (var file in files)
-        {
-<li>
-    <a asp-controller="Files" asp-action="ViewFile" asp-route-fileName="@file">@file</a>
-</li>}
-            }
+        <li><a href="@Url.Action("ListFiles", "Home", new { folderName = folder })">@folder</a></li>
+    }
 </ul>

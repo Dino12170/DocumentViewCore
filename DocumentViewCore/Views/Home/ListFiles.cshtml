@@ -1,0 +1,16 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    ViewData["Title"] = "Files in @ViewBag.CurrentFolder";
+}
+
+<h1>Danh sách Files trong @ViewBag.CurrentFolder</h1>
+<ul>
+    @foreach (var file in ViewBag.Files)
+    {
+        <li><a href="@Url.Action("ViewFile", "Files", new { folderName = ViewBag.CurrentFolder, fileName = file })">@file</a></li>
+    }
+</ul>
