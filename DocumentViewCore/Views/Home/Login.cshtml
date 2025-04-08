@@ -1,0 +1,222 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    ViewBag.Title = "Login";
+    Layout = "_LayoutLogin.cshtml";
+}
+@if (ViewBag.error != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+                alert("@ViewBag.error")
+                    };
+    </script>
+}
+
+@if (@TempData["Error"] != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+                alert("@TempData["Error"]")
+                    };
+    </script>
+}
+
+<style>
+
+    .container {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        max-width: 100vw;
+        max-height: 96vh;
+        overflow: hidden;
+    }
+
+    .login-page {
+        width: 100vw !important;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: sans-serif;
+    }
+
+    a {
+        color: #666;
+        font-size: 14px;
+        display: block;
+    }
+
+    .login-title {
+        text-align: center;
+    }
+
+    #login-page {
+        display: flex;
+        height: 95vh;
+    }
+
+    .notice {
+        font-size: 13px;
+        text-align: center;
+        color: #666;
+    }
+
+    .login {
+        width: 30%;
+        height: 100vh;
+        background: #FFF;
+        padding: 70px;
+    }
+
+        .login a {
+            margin-top: 25px;
+            text-align: center;
+        }
+
+    .form-login {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        align-content: center;
+    }
+
+        .form-login label {
+            text-align: left;
+            font-size: 13px;
+            margin-top: 10px;
+            margin-left: 20px;
+            display: block;
+            color: #666;
+        }
+
+    .input-account,
+    .input-password {
+        width: 100%;
+        background: #ededed;
+        border-radius: 25px;
+        margin: 4px 0 10px 0;
+        padding: 10px;
+        display: flex;
+    }
+
+    .icon {
+        padding: 4px;
+        color: #666;
+        min-width: 30px;
+        text-align: center;
+    }
+
+    input[type="userid"],
+    input[type="password"] {
+        width: 100%;
+        border: 0;
+        background: none;
+        font-size: 16px;
+        padding: 4px 0;
+        outline: none;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        border: 0;
+        border-radius: 25px;
+        padding: 14px;
+        background: #2b4887;
+        color: #FFF;
+        display: inline-block;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 10px;
+        transition: ease all 0.3s;
+    }
+
+        button[type="submit"]:hover {
+            opacity: 0.9;
+        }
+
+    .background {
+        width: 70%;
+        padding: 0px;
+        height: 87vh;
+        /*background: url('../../Content/login.jpg') center no-repeat;*/
+        background-size: cover;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: flex-end;
+        align-content: center;
+        flex-direction: row;
+        background-position: bottom;
+    }
+
+        .background h1 {
+            max-width: 420px;
+            color: #FFF;
+            text-align: right;
+            padding: 0;
+            margin: 0;
+        }
+
+        .background p {
+            max-width: 650px;
+            color: #1a1a1a;
+            font-size: 15px;
+            text-align: right;
+            padding: 0;
+            margin: 15px 0 0 0;
+        }
+
+    .created {
+        margin-top: 40px;
+        text-align: center;
+    }
+
+        .created p {
+            font-size: 13px;
+            font-weight: bold;
+            color: #008552;
+        }
+
+        .created a {
+            color: #666;
+            font-weight: normal;
+            text-decoration: none;
+            margin-top: 0;
+        }
+
+    .checkbox label {
+        display: inline;
+        margin: 0;
+    }
+</style>
+
+<section class="vh-100">
+    <div id="login-page" class="container-fluid h-custom">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <h2 class="login-title">Login</h2>
+            <form method="post" class="form-login" action="~/home/login">
+                <div class="input-account">
+                    <i class="fas fa-envelope icon"></i>
+                    <input type="userid" name="userid" placeholder="Portal Account" required>
+                </div>
+                <div class="input-password">
+                    <i class="fas fa-lock icon"></i>
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+
+                <button type="submit"><i class="fas fa-door-open"></i>Log in now</button>
+            </form>
+        </div>
+        <div class="background">
+        </div>
+    </div>
+</section>

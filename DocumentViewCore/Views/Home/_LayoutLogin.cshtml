@@ -1,0 +1,53 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<!DOCTYPE html>
+<html>
+<head>
+
+    <link rel="icon" type="image/x-icon" href="~/Logo/图标.jpeg">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+@*     @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr") *@
+</head>
+@*<body style="background-image: url('/Background/background_TimeoutWeb.jpg'); background-size: cover;">*@
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#"></a>
+            </div>
+            @*<div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Reel In Out<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Stock In 98/99", "MatStock9899", "MatStock9899")</li>
+                                <li>@Html.ActionLink("Pick Mission 98/99", "PickMission9899", "PickMission9899")</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Log Out", "Login", "Home")</li>
+                    </ul>
+                </div>*@
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Design by SI.</p>
+        </footer>
+    </div>
+
+@*     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap") *@
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+

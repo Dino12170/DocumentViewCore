@@ -1,48 +1,131 @@
 ﻿@{
-    ViewData["Title"] = "Files in @ViewBag.CurrentFolder";
+    ViewData["Title"] = "Files in " + ViewBag.CurrentFolder;
+    var files = ViewBag.Files as List<string>;
+    var folderName = ViewBag.CurrentFolder?.ToString() ?? "";
 }
+
+@using System.IO
+@using System.Linq
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+@*     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> *@
+
     <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+
         .file-card {
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 15px;
+            background-color: #fff;
             text-align: center;
-            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            height: 100%;
         }
 
             .file-card:hover {
-                background-color: #f5f5f5;
+                background-color: #f1f3f5;
+                transform: translateY(-3px);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             }
+
+        .file-thumb {
+            height: 150px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .breadcrumb-item a {
+            text-decoration: none;
+            color: #0d6efd;
+        }
+
+        .breadcrumb-item.active {
+            font-weight: 600;
+            color: #6c757d;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container mt-5">
-        <h1>List File in: @ViewBag.CurrentFolder</h1>
+    <div class="container mt-4">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-white p-3 rounded shadow-sm">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index", "Home")"><i class="fas fa-home"></i> Folder</a>
+                </li>
 
+                @{
+                    var segments = folderName.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                    var path = "";
+                    for (int i = 0; i < segments.Length; i++)
+                    {
+                        path += (i > 0 ? "/" : "") + segments[i];
+                        var isLast = i == segments.Length - 1;
+
+                        if (isLast)
+                        {
+                            <li class="breadcrumb-item active" aria-current="page">@segments[i]</li>
+                        }
+                        else
+                        {
+                            <li class="breadcrumb-item">
+                                <a href="@Url.Action("ListFiles", "Home", new { folderName = path })">@segments[i]</a>
+                            </li>
+                        }
+                    }
+                }
+            </ol>
+        </nav>
+
+        <!-- File List -->
         <div class="row">
-            @foreach (var file in ViewBag.Files)
+            @if (files != null && files.Count > 0)
             {
-                <div class="col-md-3 mb-4">
-                    <div class="file-card">
-                        <h4>@file</h4>
-                        <a href="@Url.Action("ViewFile", "Files", new { folderName = ViewBag.CurrentFolder, fileName = file })" class="btn btn-info btn-sm">View</a>
+                foreach (var file in files)
+                {
+                    var extension = System.IO.Path.GetExtension(file).ToLower();
+                    var fileUrl = Url.Action("ViewFile", "Files", new { folderName = folderName, fileName = file });
+
+                    string thumbnail = extension switch
+                    {
+                        ".jpg" or ".jpeg" or ".png" => $"/uploads/{folderName}/{file}",
+                        ".pdf" => "/images/pdf-icon.png",
+                        ".docx" => "/images/word-icon.png",
+                        ".pptx" => "/images/ppt-icon.png",
+                        ".mp4" => "/images/video-icon.png",
+                        _ => "/images/file-icon.png"
+                    };
+                    <div class="col-md-3 mb-4 d-flex">
+                        <div class="file-card w-100">
+                            <img src="@thumbnail" alt="thumb" class="img-fluid file-thumb" />
+                            <h6 class="text-truncate">@file</h6>
+                            <a href="@fileUrl" class="btn btn-sm btn-outline-primary">View</a>
+                        </div>
                     </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center text-muted">
+                    <p>No files found in this folder.</p>
                 </div>
             }
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

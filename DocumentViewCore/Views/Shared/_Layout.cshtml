@@ -1,28 +1,130 @@
-﻿@{ var currentFolder = ViewBag.CurrentFolder ?? "";
-                var folders = ViewBag.Folders as List<string>; }
-
+﻿@{
+    var currentFolder = ViewBag.CurrentFolder ?? "";
+    var folders = ViewBag.Folders as List<string>;
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8" />
     <title>DocumentsViewCore</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+@*     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> *@
+
+    <style>
+        html, body {
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        .full-height {
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #ffffff;
+            padding: 1rem;
+            border-right: 1px solid #dee2e6;
+        }
+
+        .content {
+            padding: 2rem;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .topbar {
+            background-color: #ffffff;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .sidebar-scroll {
+            overflow-y: auto;
+            max-height: calc(100vh - 60px);
+        }
+
+        .list-group-item {
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+            .list-group-item a {
+                text-decoration: none;
+                color: #333;
+            }
+
+            .list-group-item:hover {
+                background-color: #f0f0f0;
+            }
+
+                .list-group-item:hover a {
+                    font-weight: 600;
+                }
+
+        .topbar form input {
+            border-radius: 6px;
+        }
+
+        .topbar span {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .sidebar h5 a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+        }
+
+            .sidebar h5 a:hover {
+                color: #0d6efd;
+            }
+    </style>
 </head>
 <body>
-    <div class="d-flex">
-        <div class="bg-light p-3" style="width: 250px;">
-            <h4><a href="@Url.Action("Index", "Home")">Home</a></h4>
-            <ul class="list-group">
-                @foreach (var folder in folders)
-                {
-                <li class="list-group-item">
-                    @*<a href="/@Url.Action("Index", "Home", new { folderName = folder })">@folder</a>*@
-                    <a href="@Url.Action("ListFiles", "Home", new { folderName = folder })">@folder</a>
-                </li>}
-            </ul>
+    <div class="d-flex flex-column full-height">
+        <!-- Topbar -->
+        <div class="topbar d-flex justify-content-between align-items-center shadow-sm">
+            <form class="d-flex w-50" method="get" action="@Url.Action("Search", "Home")">
+                <input type="text" name="query" class="form-control me-2" placeholder="Search Document..." />
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+            </form>
+            <span><strong>@HttpContextAccessor.HttpContext.Session.GetString("UserName")</strong></span>
         </div>
 
-        <div class="p-3 w-100">
-            @RenderBody()
+        <!-- Main content -->
+        <div class="d-flex flex-grow-1">
+            <!-- Sidebar -->
+            <div class="sidebar d-flex flex-column shadow-sm">
+                <h5 class="mb-3"><a href="@Url.Action("Index", "Home")"><i class="fas fa-folder-open me-2 text-warning"></i> Folder</a></h5>
+
+                <div class="sidebar-scroll">
+                    <ul class="list-group">
+                        @if (folders != null)
+                        {
+                            foreach (var folder in folders)
+                            {
+                                <li class="list-group-item">
+                                    <a href="@Url.Action("ListFiles", "Home", new { folderName = folder })">
+                                        <i class="fas fa-folder text-secondary me-2"></i> @folder
+                                    </a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Body Content -->
+            <div class="content">
+                @RenderBody()
+            </div>
         </div>
     </div>
 </body>

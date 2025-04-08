@@ -46,9 +46,9 @@ namespace DocumentViewCore.Controllers
             return Content("Không có file được chọn hoặc file rỗng.");
         }
 
-        public IActionResult ViewFile(string fileName)
+        public IActionResult ViewFile(string folderName, string fileName)
         {
-            var filePath = Path.Combine(_environment.WebRootPath, "uploads", fileName);
+            var filePath = Path.Combine(_environment.WebRootPath, "uploads",folderName, fileName);
             var fileType = Path.GetExtension(filePath).ToLower();
 
             if (!System.IO.File.Exists(filePath))
@@ -72,7 +72,7 @@ namespace DocumentViewCore.Controllers
             {
                 return PhysicalFile(filePath, "video/mp4");
             }
-            else if (fileType == ".pptx")
+            else if (fileType == ".pptx" || fileType == ".ppt")
             {
                 var pdfFileName = Path.ChangeExtension(fileName, ".pdf");
                 var pdfFilePath = Path.Combine(_environment.WebRootPath, "uploads", pdfFileName);

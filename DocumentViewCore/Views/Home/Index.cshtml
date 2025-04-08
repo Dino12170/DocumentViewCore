@@ -1,68 +1,119 @@
 ﻿@{
-    ViewData["Title"] = "Google Drive Clone - Home Page";
+    ViewData["Title"] = "DocumentViewCore - Home Page";
+    var folders = ViewBag.Folders as List<string>;
+    var currentFolder = ViewBag.CurrentFolder?.ToString() ?? "";
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+@*     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> *@
+
     <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+
         .folder-card {
-            cursor: pointer;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 20px;
             text-align: center;
+            background-color: #ffffff;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
             .folder-card:hover {
-                background-color: #f5f5f5;
+                background-color: #f1f3f5;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.08);
             }
+
+        .folder-icon {
+            font-size: 2rem;
+            color: #ffc107;
+        }
+
+        .breadcrumb-item a {
+            text-decoration: none;
+            color: #0d6efd;
+        }
+
+        .breadcrumb-item.active {
+            font-weight: 600;
+            color: #6c757d;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container mt-5">
-        <h1>List Folder</h1>
+    <div class="container mt-4">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-white p-3 rounded shadow-sm">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index", "Home")"><i class="fas fa-home"></i> Folder</a>
+                </li>
 
-        <div class="row">
-            @foreach (var folder in ViewBag.Folders)
+                @{
+                    var segments = currentFolder.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                    var path = "";
+
+                    for (int i = 0; i < segments.Length; i++)
+                    {
+                        var segment = segments[i];
+                        path += (i > 0 ? "/" : "") + segment;
+                        var isLast = i == segments.Length - 1;
+
+                        if (isLast)
+                        {
+                            <li class="breadcrumb-item active" aria-current="page">@segment</li>
+                        }
+                        else
+                        {
+                            <li class="breadcrumb-item">
+                                <a href="@Url.Action("ListFiles", "Home", new { folderName = path })">@segment</a>
+                            </li>
+                        }
+                    }
+                }
+            </ol>
+        </nav>
+
+        <!-- Folder cards -->
+        <div class="row mt-4">
+            @if (folders != null && folders.Count > 0)
             {
-                <div class="col-md-3 mb-4">
-                    <div class="folder-card">
-                        <h4>@folder</h4>
-                        <a href="@Url.Action("ListFiles", "Home", new { folderName = folder })" class="btn btn-primary btn-sm">View</a>
+                foreach (var folder in folders)
+                {
+                    <div class="col-md-3 mb-4">
+                        <div class="folder-card h-100">
+                            <div class="folder-icon mb-2">
+                                <i class="fas fa-folder"></i>
+                            </div>
+                            <h5 class="mb-2">@folder</h5>
+                            <a href="@Url.Action("ListFiles", "Home", new { folderName = folder })" class="btn btn-outline-primary btn-sm">View</a>
+                        </div>
                     </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center text-muted">
+                    <p>No folders found.</p>
                 </div>
             }
         </div>
-
-        <hr>
-
-        @*<h2>Tải lên File</h2>
-        <form action="@Url.Action("Upload", "Files")" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="file">Chọn file để tải lên:</label>
-                <input type="file" name="file" id="file" class="form-control">
-            </div>
-            <div class="form-group">
-                <label for="folderName">Chọn thư mục:</label>
-                <select name="folderName" id="folderName" class="form-control">
-                    @foreach (var folder in ViewBag.Folders)
-                    {
-                        <option value="@folder">@folder</option>
-                    }
-                </select>
-            </div>
-            <button type="submit" class="btn btn-success">Tải lên</button>
-        </form>*@
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
