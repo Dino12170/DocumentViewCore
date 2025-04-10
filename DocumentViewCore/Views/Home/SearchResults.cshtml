@@ -1,0 +1,44 @@
+﻿@model List<(string Folder, string File)>
+@{
+    ViewData["Title"] = "Search Results for \"" + ViewBag.Query + "\"";
+}
+
+<div class="container mt-4">
+    <h4 class="mb-3">🔍 Results for: <em>@ViewBag.Query</em></h4>
+
+    <div class="row">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var (folder, file) in Model)
+            {
+                var fileUrl = Url.Action("ViewFile", "Files", new { folderName = folder, fileName = file });
+                var extension = System.IO.Path.GetExtension(file).ToLower();
+
+                string thumbnail = extension switch
+                {
+                    ".jpg" or ".jpeg" or ".png" => $"/uploads/{folder}/{file}",
+                    ".pdf" => "/images/pdf-icon.png",
+                    ".docx" => "/images/word-icon.png",
+                    ".pptx" => "/images/ppt-icon.png",
+                    ".mp4" => "/images/video-icon.png",
+                    _ => "/images/file-icon.png"
+                };
+
+                <div class="col-md-3 mb-4 d-flex">
+                    <div class="file-card w-100">
+                        <img src="@thumbnail" alt="thumb" class="img-fluid file-thumb" />
+                        <h6 class="text-truncate">@file</h6>
+                        <small class="text-muted">@folder</small><br />
+                        <a href="@fileUrl" class="btn btn-sm btn-outline-primary mt-1">View</a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center text-muted">
+                <p>No files matched your search.</p>
+            </div>
+        }
+    </div>
+</div>

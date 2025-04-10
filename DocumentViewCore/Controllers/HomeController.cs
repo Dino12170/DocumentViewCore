@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using System.Web;
 using System;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace DocumentViewCore.Controllers
 {
@@ -22,19 +23,83 @@ namespace DocumentViewCore.Controllers
 
         public IActionResult Index()
         {
+            if (HttpContext.Session.GetString("UserId") == null)
+            {
+                //ViewBag.error = TempData["Please login first!!!"];
+                TempData["Error"] = "Plese Login!!!";
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                var uploadPathFolder = Path.Combine(_environment.WebRootPath, "uploads");
+
+                if (!Directory.Exists(uploadPathFolder))
+                {
+                    Directory.CreateDirectory(uploadPathFolder);
+                }
+                ViewBag.username = HttpContext.Session.GetString("UserName");
+                ViewBag.userID = HttpContext.Session.GetString("UserId");
+                var folders = Directory.GetDirectories(uploadPathFolder).Select(Path.GetFileName).ToList();
+                ViewBag.Folders = folders;
+
+                return View();
+            }
+        }
+
+        public IActionResult AddNew()
+        {
+            if (HttpContext.Session.GetString("UserId") == null)
+            {
+                //ViewBag.error = TempData["Please login first!!!"];
+                TempData["Error"] = "Plese Login!!!";
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                var uploadPathFolder = Path.Combine(_environment.WebRootPath, "uploads");
+
+                if (!Directory.Exists(uploadPathFolder))
+                {
+                    Directory.CreateDirectory(uploadPathFolder);
+                }
+                ViewBag.username = HttpContext.Session.GetString("UserName");
+                ViewBag.userID = HttpContext.Session.GetString("UserId");
+                var folders = Directory.GetDirectories(uploadPathFolder).Select(Path.GetFileName).ToList();
+                ViewBag.Folders = folders;
+
+                return View();
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AddFolder(string newFolderName)
+        {
+            if (string.IsNullOrWhiteSpace(newFolderName))
+                return BadRequest("Folder name is required.");
+
+            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            var newFolderPath = Path.Combine(rootPath, newFolderName);
+
+            if (!Directory.Exists(newFolderPath))
+                Directory.CreateDirectory(newFolderPath);
+
+            return Json(new { success = true, folder = newFolderName });
+        }
+
+        public IActionResult RefreshSidebar()
+        {
             var uploadPathFolder = Path.Combine(_environment.WebRootPath, "uploads");
 
             if (!Directory.Exists(uploadPathFolder))
             {
                 Directory.CreateDirectory(uploadPathFolder);
             }
-            ViewBag.username = HttpContext.Session.GetString("UserName");
-            ViewBag.userID = HttpContext.Session.GetString("UserId");
             var folders = Directory.GetDirectories(uploadPathFolder).Select(Path.GetFileName).ToList();
             ViewBag.Folders = folders;
 
-            return View();
+            return PartialView("_FolderSidebar", folders);
         }
+
 
         #region Login
 
@@ -130,22 +195,99 @@ namespace DocumentViewCore.Controllers
 
         public IActionResult ListFiles(string folderName)
         {
-            var uploadPathFolder = Path.Combine(_environment.WebRootPath, "uploads");
-            var combinepath = Path.Combine(uploadPathFolder, folderName);
-            var uploadPath = Path.Combine(_environment.WebRootPath, "uploads", folderName);
-
-            if (!Directory.Exists(uploadPath))
+            if (HttpContext.Session.GetString("UserId") == null)
             {
-                return NotFound("Thư mục không tồn tại.");
+                //ViewBag.error = TempData["Please login first!!!"];
+                TempData["Error"] = "Plese Login!!!";
+                return RedirectToAction("Login", "Home");
             }
+            else
+            {
+                var uploadPathFolder = Path.Combine(_environment.WebRootPath, "uploads");
+                var combinepath = Path.Combine(uploadPathFolder, folderName);
+                var uploadPath = Path.Combine(_environment.WebRootPath, "uploads", folderName);
 
-            var files = Directory.GetFiles(uploadPath).Select(Path.GetFileName).ToList();
-            ViewBag.Files = files;
-            ViewBag.CurrentFolder = folderName;
+                if (!Directory.Exists(uploadPath))
+                {
+                    return NotFound("Thư mục không tồn tại.");
+                }
 
-            var folders = Directory.GetDirectories(uploadPathFolder).Select(Path.GetFileName).ToList();
-            ViewBag.Folders = folders;
-            return View();
+                var files = Directory.GetFiles(uploadPath).Select(Path.GetFileName).ToList();
+                ViewBag.Files = files;
+                ViewBag.CurrentFolder = folderName;
+
+                var folders = Directory.GetDirectories(uploadPathFolder).Select(Path.GetFileName).ToList();
+                ViewBag.Folders = folders;
+                return View();
+            }
         }
+
+        [HttpGet]
+        public IActionResult Search(string query)
+        {
+            if (HttpContext.Session.GetString("UserId") == null)
+            {
+                //ViewBag.error = TempData["Please login first!!!"];
+                TempData["Error"] = "Plese Login!!!";
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                var uploadRoot = Path.Combine(_environment.WebRootPath, "uploads");
+                var matchedFiles = new List<(string Folder, string File)>();
+
+                if (Directory.Exists(uploadRoot))
+                {
+                    var allFiles = Directory
+                        .GetFiles(uploadRoot, "*", SearchOption.AllDirectories)
+                        .Where(f => Path.GetDirectoryName(f) != uploadRoot) // chỉ giữ file KHÔNG ở thư mục gốc
+                        .ToList();
+
+                    foreach (var filePath in allFiles)
+                    {
+                        var fileName = Path.GetFileName(filePath);
+                        if (fileName.Contains(query, StringComparison.OrdinalIgnoreCase))
+                        {
+                            var folder = Path.GetRelativePath(uploadRoot, Path.GetDirectoryName(filePath)!);
+                            matchedFiles.Add((folder, fileName));
+                        }
+                    }
+                }
+
+                ViewBag.Query = query;
+                return View("SearchResults", matchedFiles);
+            }
+        }
+
+        //[HttpGet]
+        //public IActionResult Search(string query)
+        //{
+        //    if (string.IsNullOrWhiteSpace(query))
+        //    {
+        //        return View("SearchResults", new List<(string Folder, string File)>());
+        //    }
+
+        //    var uploadRoot = Path.Combine(_environment.WebRootPath, "uploads");
+        //    var matchedFiles = new List<(string Folder, string File)>();
+
+        //    var allFiles = Directory.GetFiles(uploadRoot, "*", SearchOption.AllDirectories);
+
+        //    foreach (var filePath in allFiles)
+        //    {
+        //        var fileName = Path.GetFileName(filePath);
+        //        var relativeFolder = Path.GetRelativePath(uploadRoot, Path.GetDirectoryName(filePath)!);
+
+        //        // 👉 Chỉ thêm nếu file nằm trong thư mục con (tức là relativeFolder không rỗng)
+        //        if (!string.IsNullOrEmpty(relativeFolder) &&
+        //            fileName.Contains(query, StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            matchedFiles.Add((relativeFolder, fileName));
+        //        }
+        //    }
+
+        //    ViewBag.Query = query;
+        //    return View("SearchResults", matchedFiles);
+        //}
+
     }
 }

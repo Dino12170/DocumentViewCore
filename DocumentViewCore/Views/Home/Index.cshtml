@@ -4,6 +4,15 @@
     var currentFolder = ViewBag.CurrentFolder?.ToString() ?? "";
 }
 
+@if (@TempData["Alert"] != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+                alert("@TempData["Alert"]")
+                    };
+    </script>
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

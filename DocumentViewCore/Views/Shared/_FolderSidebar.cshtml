@@ -1,0 +1,23 @@
+﻿@model List<string>
+
+<div class="mb-3">
+    <a href="@Url.Action("AddNew", "Home")" class="btn btn-dark rounded-pill px-4 py-2 d-inline-flex align-items-center shadow">
+        <i class="fas fa-plus me-2"></i> New
+    </a>
+</div>
+
+<div class="sidebar-scroll">
+    <ul class="list-group">
+        @if (Model != null)
+        {
+            foreach (var folder in Model)
+            {
+                <li class="list-group-item">
+                    <a href="@Url.Action("ListFiles", "Home", new { folderName = folder })">
+                        <i class="fas fa-folder text-secondary me-2"></i> @folder
+                    </a>
+                </li>
+            }
+        }
+    </ul>
+</div>

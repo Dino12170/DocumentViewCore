@@ -23,11 +23,18 @@ namespace DocumentViewCore.Controllers
         }
 
         [HttpPost]
-        public IActionResult Upload(IFormFile file, string folderName)
+        public IActionResult UploadFile(IFormFile file, string folderName, string newFolderName)
         {
+            string finalFolderName = !string.IsNullOrEmpty(newFolderName) ? newFolderName : folderName;
+
+            if (string.IsNullOrEmpty(finalFolderName))
+            {
+                return Content("Folder name is required.");
+            }
+
             if (file != null && file.Length > 0)
             {
-                var uploadPath = Path.Combine(_environment.WebRootPath, "uploads", folderName);
+                var uploadPath = Path.Combine(_environment.WebRootPath, "uploads", finalFolderName);
 
                 if (!Directory.Exists(uploadPath))
                 {
@@ -40,11 +47,12 @@ namespace DocumentViewCore.Controllers
                     file.CopyTo(stream);
                 }
 
-                return RedirectToAction("ListFiles", "Home", new { folderName });
+                return RedirectToAction("AddNew", "Home");
             }
 
-            return Content("Không có file được chọn hoặc file rỗng.");
+            return Content("No file selected or file is empty.");
         }
+
 
         public IActionResult ViewFile(string folderName, string fileName)
         {
