@@ -1,4 +1,8 @@
-﻿@model List<string>
+﻿<h5 class="mb-3">
+    <a href="@Url.Action("Index", "Home")">
+        <i class="fas fa-folder-open me-2 text-warning"></i> Folder
+    </a>
+</h5>
 
 <div class="mb-3">
     <a href="@Url.Action("AddNew", "Home")" class="btn btn-dark rounded-pill px-4 py-2 d-inline-flex align-items-center shadow">
@@ -8,9 +12,9 @@
 
 <div class="sidebar-scroll">
     <ul class="list-group">
-        @if (Model != null)
+        @if (ViewBag.Folders != null)
         {
-            foreach (var folder in Model)
+            foreach (var folder in ViewBag.Folders)
             {
                 <li class="list-group-item">
                     <a href="@Url.Action("ListFiles", "Home", new { folderName = folder })">

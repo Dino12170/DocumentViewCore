@@ -101,8 +101,15 @@
                 <input type="text" name="query" id="searchQuery" class="form-control me-2" placeholder="Search Document..." />
                 <button class="btn btn-outline-primary fw-semibold" type="submit">Search</button>
             </form>
-            <span><strong>@HttpContextAccessor.HttpContext.Session.GetString("UserName")</strong></span>
+
+            <div class="d-flex align-items-center">
+                <span class="me-3"><strong>@HttpContextAccessor.HttpContext.Session.GetString("UserName")</strong></span>
+                <form method="post" asp-controller="Home" asp-action="Logout">
+                    <button type="submit" class="btn btn-outline-danger btn-sm" style="background-color:#0d6efd; color:white; border-color:#0d6efd">Logout</button>
+                </form>
+            </div>
         </div>
+
 
 
         <!-- Main content -->
@@ -137,13 +144,7 @@
 
             <!-- Sidebar -->
             <div class="sidebar d-flex flex-column shadow-sm">
-                <h5 class="mb-3">
-                    <a href="@Url.Action("Index", "Home")">
-                        <i class="fas fa-folder-open me-2 text-warning"></i> Folder
-                    </a>
-                </h5>
-
-                @await Html.PartialAsync("_FolderSidebar", folders)
+                @await Html.PartialAsync("_FolderSidebar")
             </div>
 
             <!-- Body Content -->

@@ -93,6 +93,31 @@ namespace DocumentViewCore.Controllers
 
                 return PhysicalFile(pdfFilePath, "application/pdf");
             }
+            else if (fileType == ".doc" || fileType == ".docx")
+            {
+                var pdfFileName = Path.ChangeExtension(fileName, ".pdf");
+                var pdfFilePath = Path.Combine(_environment.WebRootPath, "uploads", folderName, pdfFileName);
+
+                if (!System.IO.File.Exists(pdfFilePath))
+                {
+                    ConvertWordToPdf(filePath, pdfFilePath);
+                }
+
+                return PhysicalFile(pdfFilePath, "application/pdf");
+            }
+            else if (fileType == ".xls" || fileType == ".xlsx")
+            {
+                var pdfFileName = Path.ChangeExtension(fileName, ".pdf");
+                var pdfFilePath = Path.Combine(_environment.WebRootPath, "uploads", folderName, pdfFileName);
+
+                if (!System.IO.File.Exists(pdfFilePath))
+                {
+                    ConvertExcelToPdf(filePath, pdfFilePath);
+                }
+
+                return PhysicalFile(pdfFilePath, "application/pdf");
+            }
+
 
             return Content("File format not supported for preview.");
         }
@@ -103,5 +128,18 @@ namespace DocumentViewCore.Controllers
                 presentation.Save(pdfPath, Aspose.Slides.Export.SaveFormat.Pdf);
             }
         }
+
+        private void ConvertWordToPdf(string wordPath, string pdfPath)
+        {
+            var doc = new Aspose.Words.Document(wordPath);
+            doc.Save(pdfPath, Aspose.Words.SaveFormat.Pdf);
+        }
+
+        private void ConvertExcelToPdf(string excelPath, string pdfPath)
+        {
+            var workbook = new Aspose.Cells.Workbook(excelPath);
+            workbook.Save(pdfPath, Aspose.Cells.SaveFormat.Pdf);
+        }
+
     }
 }

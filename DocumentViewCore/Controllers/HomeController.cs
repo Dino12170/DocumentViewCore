@@ -97,7 +97,7 @@ namespace DocumentViewCore.Controllers
             var folders = Directory.GetDirectories(uploadPathFolder).Select(Path.GetFileName).ToList();
             ViewBag.Folders = folders;
 
-            return PartialView("_FolderSidebar", folders);
+            return PartialView("_FolderSidebar");
         }
 
 
@@ -174,7 +174,7 @@ namespace DocumentViewCore.Controllers
             }
 
             HttpContext.Session.Clear();
-            return RedirectToAction("Login");
+            return RedirectToAction("Login", "Home");
         }
 
         public string EC(string str)
@@ -253,7 +253,8 @@ namespace DocumentViewCore.Controllers
                         }
                     }
                 }
-
+                var folders = Directory.GetDirectories(uploadRoot).Select(Path.GetFileName).ToList();
+                ViewBag.Folders = folders;
                 ViewBag.Query = query;
                 return View("SearchResults", matchedFiles);
             }

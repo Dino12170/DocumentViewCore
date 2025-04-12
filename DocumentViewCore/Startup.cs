@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +36,11 @@ namespace DocumentViewCore
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
+
+            //services.Configure<FormOptions>(options =>
+            //{
+            //    options.MultipartBodyLengthLimit = 1024L * 1024L * 1024L; // 1 GB
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,6 +64,16 @@ namespace DocumentViewCore
             app.UseAuthorization();
 
             app.UseSession();
+
+            //app.Use(async (context, next) =>
+            //{
+            //    var maxRequestBodySizeFeature = context.Features.Get<IHttpMaxRequestBodySizeFeature>();
+            //    if (maxRequestBodySizeFeature != null && !maxRequestBodySizeFeature.IsReadOnly)
+            //    {
+            //        maxRequestBodySizeFeature.MaxRequestBodySize = 1024L * 1024L * 1024L; // 1 GB
+            //    }
+            //    await next();
+            //});
 
             app.UseEndpoints(endpoints =>
             {
