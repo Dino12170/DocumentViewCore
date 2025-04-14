@@ -48,43 +48,69 @@ namespace DocumentViewCore.Controllers
 
         public IActionResult AddNew()
         {
-            if (HttpContext.Session.GetString("UserId") == null)
-            {
-                //ViewBag.error = TempData["Please login first!!!"];
-                TempData["Error"] = "Plese Login!!!";
-                return RedirectToAction("Login", "Home");
-            }
-            else
-            {
-                var uploadPathFolder = Path.Combine(_environment.WebRootPath, "uploads");
+            var uploadPathFolder = Path.Combine(_environment.WebRootPath, "uploads");
 
-                if (!Directory.Exists(uploadPathFolder))
-                {
-                    Directory.CreateDirectory(uploadPathFolder);
-                }
-                ViewBag.username = HttpContext.Session.GetString("UserName");
-                ViewBag.userID = HttpContext.Session.GetString("UserId");
-                var folders = Directory.GetDirectories(uploadPathFolder).Select(Path.GetFileName).ToList();
-                ViewBag.Folders = folders;
-
-                return View();
+            if (!Directory.Exists(uploadPathFolder))
+            {
+                Directory.CreateDirectory(uploadPathFolder);
             }
+            ViewBag.username = HttpContext.Session.GetString("UserName");
+            ViewBag.userID = HttpContext.Session.GetString("UserId");
+            var folders = Directory.GetDirectories(uploadPathFolder).Select(Path.GetFileName).ToList();
+            ViewBag.Folders = folders;
+
+            return View();
+
+            //if (HttpContext.Session.GetString("UserId") == null)
+            //{
+            //    //ViewBag.error = TempData["Please login first!!!"];
+            //    TempData["Error"] = "Plese Login!!!";
+            //    return RedirectToAction("Login", "Home");
+            //}
+            //else
+            //{
+            //    var uploadPathFolder = Path.Combine(_environment.WebRootPath, "uploads");
+
+            //    if (!Directory.Exists(uploadPathFolder))
+            //    {
+            //        Directory.CreateDirectory(uploadPathFolder);
+            //    }
+            //    ViewBag.username = HttpContext.Session.GetString("UserName");
+            //    ViewBag.userID = HttpContext.Session.GetString("UserId");
+            //    var folders = Directory.GetDirectories(uploadPathFolder).Select(Path.GetFileName).ToList();
+            //    ViewBag.Folders = folders;
+
+            //    return View();
+            //}
         }
 
         [HttpPost]
-        public IActionResult AddFolder(string newFolderName)
+        public JsonResult CreateFolder(string departmentFolder, string sectionFolder)
         {
-            if (string.IsNullOrWhiteSpace(newFolderName))
-                return BadRequest("Folder name is required.");
+            try
+            {
+                var rootPath = Path.Combine(_environment.WebRootPath, "uploads");
+                var deptPath = Path.Combine(rootPath, departmentFolder);
+                var sectionPath = Path.Combine(deptPath, sectionFolder);
 
-            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-            var newFolderPath = Path.Combine(rootPath, newFolderName);
+                if (!Directory.Exists(deptPath))
+                {
+                    Directory.CreateDirectory(deptPath);
+                }
 
-            if (!Directory.Exists(newFolderPath))
-                Directory.CreateDirectory(newFolderPath);
+                if (!Directory.Exists(sectionPath))
+                {
+                    Directory.CreateDirectory(sectionPath);
+                }
 
-            return Json(new { success = true, folder = newFolderName });
+                return Json(new { success = true, folder = departmentFolder });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
+
 
         public IActionResult RefreshSidebar()
         {

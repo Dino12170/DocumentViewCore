@@ -10,6 +10,7 @@ using System.ComponentModel.DataAnnotations;
 using DocumentViewCore.Models;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace DocumentViewCore.Controllers
 {
@@ -22,35 +23,54 @@ namespace DocumentViewCore.Controllers
             _environment = environment;
         }
 
-        [HttpPost]
-        public IActionResult UploadFile(IFormFile file, string folderName, string newFolderName)
+        [HttpGet]
+        public JsonResult GetSectionFolders(string department)
         {
-            string finalFolderName = !string.IsNullOrEmpty(newFolderName) ? newFolderName : folderName;
-
-            if (string.IsNullOrEmpty(finalFolderName))
+            try
             {
-                return Content("Folder name is required.");
+                var deptPath = Path.Combine(_environment.WebRootPath, "uploads", department);
+                if (Directory.Exists(deptPath))
+                {
+                    var folders = Directory.GetDirectories(deptPath)
+                                           .Select(Path.GetFileName)
+                                           .ToList();
+                    return Json(folders);
+                }
+                return Json(new List<string>());
+            }
+            catch
+            {
+                return Json(new List<string>());
+            }
+        }
+
+
+        [HttpPost]
+        public IActionResult UploadFile(IFormFile file, string foldeDeprName, string folderSecName)
+        {
+            if (file == null || file.Length == 0)
+                return Content("No file selected.");
+
+            string targetFolder = !string.IsNullOrEmpty(folderSecName) ? folderSecName : foldeDeprName;
+            if (string.IsNullOrEmpty(targetFolder))
+                return Content("No target folder specified.");
+
+            var uploadPath = Path.Combine(_environment.WebRootPath, "uploads", foldeDeprName);
+
+            // Nếu có Section Folder thì tạo thêm cấp con
+            if (!string.IsNullOrEmpty(folderSecName))
+                uploadPath = Path.Combine(uploadPath, folderSecName);
+
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            var filePath = Path.Combine(uploadPath, file.FileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
             }
 
-            if (file != null && file.Length > 0)
-            {
-                var uploadPath = Path.Combine(_environment.WebRootPath, "uploads", finalFolderName);
-
-                if (!Directory.Exists(uploadPath))
-                {
-                    Directory.CreateDirectory(uploadPath);
-                }
-
-                var filePath = Path.Combine(uploadPath, file.FileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    file.CopyTo(stream);
-                }
-
-                return RedirectToAction("AddNew", "Home");
-            }
-
-            return Content("No file selected or file is empty.");
+            return RedirectToAction("AddNew", "Home");
         }
 
 
