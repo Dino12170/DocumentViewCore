@@ -2,6 +2,7 @@
     ViewData["Title"] = "Files in " + ViewBag.CurrentFolder;
     var files = ViewBag.Files as List<string>;
     var folderName = ViewBag.CurrentFolder?.ToString() ?? "";
+    var subfolders = ViewBag.Subfolders as List<string>;
 }
 
 @using System.IO
@@ -16,7 +17,6 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-@*     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> *@
 
     <style>
         body {
@@ -89,6 +89,26 @@
                 }
             </ol>
         </nav>
+
+        <!-- Subfolders List -->
+        <div class="row mb-4">
+            @if (subfolders != null && subfolders.Count > 0)
+            {
+                foreach (var folder in subfolders)
+                {
+                    var newPath = string.IsNullOrEmpty(folderName) ? folder : $"{folderName}/{folder}";
+                    <div class="col-md-3 mb-3 d-flex">
+                        <div class="file-card w-100">
+                            <img src="/images/folder-icon.png" alt="folder" class="img-fluid file-thumb" />
+                            <h6 class="text-truncate">@folder</h6>
+                            <a href="@Url.Action("ListFiles", "Home", new { folderName = newPath })" class="btn btn-sm btn-outline-secondary">
+                                Open Folder
+                            </a>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
 
         <!-- File List -->
         <div class="row">

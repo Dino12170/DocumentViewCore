@@ -37,10 +37,10 @@ namespace DocumentViewCore
                 options.Cookie.IsEssential = true;
             });
 
-            //services.Configure<FormOptions>(options =>
-            //{
-            //    options.MultipartBodyLengthLimit = 1024L * 1024L * 1024L; // 1 GB
-            //});
+            services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 1024L * 1024L * 1024L; // 1 GB
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,15 +65,15 @@ namespace DocumentViewCore
 
             app.UseSession();
 
-            //app.Use(async (context, next) =>
-            //{
-            //    var maxRequestBodySizeFeature = context.Features.Get<IHttpMaxRequestBodySizeFeature>();
-            //    if (maxRequestBodySizeFeature != null && !maxRequestBodySizeFeature.IsReadOnly)
-            //    {
-            //        maxRequestBodySizeFeature.MaxRequestBodySize = 1024L * 1024L * 1024L; // 1 GB
-            //    }
-            //    await next();
-            //});
+            app.Use(async (context, next) =>
+            {
+                var maxRequestBodySizeFeature = context.Features.Get<IHttpMaxRequestBodySizeFeature>();
+                if (maxRequestBodySizeFeature != null && !maxRequestBodySizeFeature.IsReadOnly)
+                {
+                    maxRequestBodySizeFeature.MaxRequestBodySize = 1024L * 1024L * 1024L; // 1 GB
+                }
+                await next();
+            });
 
             app.UseEndpoints(endpoints =>
             {

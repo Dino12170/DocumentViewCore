@@ -50,7 +50,7 @@
 	</div>
 	<br />
 	<h2 class="mb-4">📁Upload File</h2>
-	<form asp-action="UploadFile" asp-controller="Files" method="post" enctype="multipart/form-data">
+	<form asp-action="UploadFile" asp-controller="Files" method="post" enctype="multipart/form-data" onsubmit="disableUIOnSubmit(this)">
 		<div class="mb-3">
 			<label for="selectDept" class="form-label">Choose Department Folder to Upload</label>
 			<select id="selectDept" name="foldeDeprName" class="form-select" required>
@@ -78,6 +78,14 @@
 			<i class="fas fa-upload me-1"></i> Upload File
 		</button>
 	</form>
+
+	<!-- Loading Overlay -->
+	<div id="loadingOverlay" style="display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255,255,255,0.8); text-align: center;">
+		<div class="spinner-border text-primary" role="status" style="margin-top: 20%;">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+		<p class="mt-3 fw-semibold">Uploading, please wait...</p>
+	</div>
 
 	<!-- Gợi ý: Nút quay lại -->
 	<div class="mt-4">
@@ -115,15 +123,14 @@
 			});
 		});
 
-		// Ẩn khung nhập thư mục mới khi trang vừa load
-		$(document).ready(function () {
-			// document.getElementById("newFolderName").disabled = true;
-			// document.getElementById("btnAdd").disabled = true;
-		});
+		function disableUIOnSubmit(form) {
+			// Disable all inputs & buttons
+			// const inputs = form.querySelectorAll('input, select, button, textarea');
+			// inputs.forEach(el => el.disabled = true);
 
-		// document.getElementById("").addEventListener("click", function () {
-		// 	document.getElementById("newFolderName").disabled = false;
-		// });
+			// Show overlay
+			document.getElementById("loadingOverlay").style.display = "block";
+		}
 
 		// Khi click vào dấu cộng, cho phép nhập Department mới và disable dropdown
 		document.getElementById("addDeptBtn").addEventListener("click", function () {

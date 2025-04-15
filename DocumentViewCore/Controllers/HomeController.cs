@@ -219,34 +219,79 @@ namespace DocumentViewCore.Controllers
         }
         #endregion
 
+        //public IActionResult ListFiles(string folderName)
+        //{
+        //    if (HttpContext.Session.GetString("UserId") == null)
+        //    {
+        //        //ViewBag.error = TempData["Please login first!!!"];
+        //        TempData["Error"] = "Plese Login!!!";
+        //        return RedirectToAction("Login", "Home");
+        //    }
+        //    else
+        //    {
+        //        var uploadPathFolder = Path.Combine(_environment.WebRootPath, "uploads");
+        //        var combinepath = Path.Combine(uploadPathFolder, folderName);
+        //        var uploadPath = Path.Combine(_environment.WebRootPath, "uploads", folderName);
+
+        //        if (!Directory.Exists(uploadPath))
+        //        {
+        //            return NotFound("Thư mục không tồn tại.");
+        //        }
+
+        //        var files = Directory.GetFiles(uploadPath).Select(Path.GetFileName).ToList();
+        //        ViewBag.Files = files;
+        //        ViewBag.CurrentFolder = folderName;
+
+        //        var folders = Directory.GetDirectories(uploadPathFolder).Select(Path.GetFileName).ToList();
+        //        ViewBag.Folders = folders;
+        //        return View();
+        //    }
+        //}
+
         public IActionResult ListFiles(string folderName)
         {
+            // Kiểm tra đăng nhập
             if (HttpContext.Session.GetString("UserId") == null)
             {
-                //ViewBag.error = TempData["Please login first!!!"];
-                TempData["Error"] = "Plese Login!!!";
+                TempData["Error"] = "Please Login!!!";
                 return RedirectToAction("Login", "Home");
             }
-            else
+
+            // Đường dẫn gốc: wwwroot/uploads
+            var uploadRootPath = Path.Combine(_environment.WebRootPath, "uploads");
+
+            // Đường dẫn thư mục cần xem
+            var targetPath = string.IsNullOrEmpty(folderName)
+                ? uploadRootPath
+                : Path.Combine(uploadRootPath, folderName);
+
+            if (!Directory.Exists(targetPath))
             {
-                var uploadPathFolder = Path.Combine(_environment.WebRootPath, "uploads");
-                var combinepath = Path.Combine(uploadPathFolder, folderName);
-                var uploadPath = Path.Combine(_environment.WebRootPath, "uploads", folderName);
-
-                if (!Directory.Exists(uploadPath))
-                {
-                    return NotFound("Thư mục không tồn tại.");
-                }
-
-                var files = Directory.GetFiles(uploadPath).Select(Path.GetFileName).ToList();
-                ViewBag.Files = files;
-                ViewBag.CurrentFolder = folderName;
-
-                var folders = Directory.GetDirectories(uploadPathFolder).Select(Path.GetFileName).ToList();
-                ViewBag.Folders = folders;
-                return View();
+                return NotFound("Thư mục không tồn tại.");
             }
+
+            // Lấy danh sách file trong thư mục hiện tại
+            var files = Directory.GetFiles(targetPath).Select(Path.GetFileName).ToList();
+
+            // Lấy danh sách thư mục con trong thư mục hiện tại
+            var subfolders = Directory.GetDirectories(targetPath)
+                .Select(dir => Path.GetFileName(dir))
+                .ToList();
+
+            // Gửi dữ liệu về View
+            ViewBag.Files = files;
+            ViewBag.Subfolders = subfolders;
+            ViewBag.CurrentFolder = folderName;
+
+            // Gửi danh sách thư mục cấp 1 (trong wwwroot/uploads) nếu cần hiển thị sidebar
+            var topFolders = Directory.GetDirectories(uploadRootPath)
+                .Select(Path.GetFileName)
+                .ToList();
+            ViewBag.Folders = topFolders;
+
+            return View();
         }
+
 
         [HttpGet]
         public IActionResult Search(string query)
