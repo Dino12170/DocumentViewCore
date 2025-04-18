@@ -1,121 +1,129 @@
 ﻿@{
-    var currentFolder = ViewBag.CurrentFolder ?? "";
-    var folders = ViewBag.Folders as List<string>;
+	var currentFolder = ViewBag.CurrentFolder ?? "";
+	var folders = ViewBag.Folders as List<string>;
 }
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title>DocumentsViewCore</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-@*     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> *@
+	<meta charset="utf-8" />
+	<title>DocumentsViewCore</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+	@*     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> *@
 
-    <style>
-        html, body {
-            height: 100%;
-            font-family: 'Inter', sans-serif;
-            background-color: #f9f9f9;
-        }
+	<style>
+		html, body {
+			height: 100%;
+			font-family: 'Inter', sans-serif;
+			background-color: #f9f9f9;
+		}
 
-        .full-height {
-            height: 100vh;
-        }
+		.full-height {
+			height: 100vh;
+		}
 
-        .sidebar {
-            width: 250px;
-            background-color: #ffffff;
-            padding: 1rem;
-            border-right: 1px solid #dee2e6;
-        }
+		.sidebar {
+			width: 250px;
+			background-color: #ffffff;
+			padding: 1rem;
+			border-right: 1px solid #dee2e6;
+		}
 
-        .content {
-            padding: 2rem;
-            flex-grow: 1;
-            overflow-y: auto;
-        }
+		.content {
+			padding: 2rem;
+			flex-grow: 1;
+			overflow-y: auto;
+		}
 
-        .topbar {
-            background-color: #ffffff;
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid #dee2e6;
-        }
+		.topbar {
+			background-color: #ffffff;
+			padding: 0.75rem 1rem;
+			border-bottom: 1px solid #dee2e6;
+		}
 
-        .sidebar-scroll {
-            overflow-y: auto;
-            max-height: calc(100vh - 60px);
-        }
+		.sidebar-scroll {
+			overflow-y: auto;
+			max-height: calc(100vh - 60px);
+		}
 
-        .btn-dark:hover {
-            background-color: #333;
-            color: #fff;
-        }
+		.btn-dark:hover {
+			background-color: #333;
+			color: #fff;
+		}
 
 
-        .list-group-item {
-            /* border: none; */
-            border-radius: 8px;
-            transition: background-color 0.2s ease-in-out;
-        }
+		.list-group-item {
+			/* border: none; */
+			border-radius: 8px;
+			transition: background-color 0.2s ease-in-out;
+		}
 
-            .list-group-item a {
-                text-decoration: none;
-                color: #333;
-            }
+			.list-group-item a {
+				text-decoration: none;
+				color: #333;
+			}
 
-            .list-group-item:hover {
-                background-color: #f0f0f0;
-            }
+			.list-group-item:hover {
+				background-color: #f0f0f0;
+			}
 
-                .list-group-item:hover a {
-                    font-weight: 600;
-                }
+				.list-group-item:hover a {
+					font-weight: 600;
+				}
 
-        .topbar form input {
-            border-radius: 6px;
-        }
+		.topbar form input {
+			border-radius: 6px;
+		}
 
-        .topbar span {
-            font-weight: 600;
-            font-size: 18px;
-        }
+		.topbar span {
+			font-weight: 600;
+			font-size: 18px;
+		}
 
-        .sidebar h5 a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 600;
-        }
+		.sidebar h5 a {
+			text-decoration: none;
+			color: #333;
+			font-weight: 600;
+		}
 
-            .sidebar h5 a:hover {
-                color: #0d6efd;
-            }
-    </style>
+			.sidebar h5 a:hover {
+				color: #0d6efd;
+			}
+	</style>
 </head>
 <body>
-    <div class="d-flex flex-column full-height">
-        <!-- Topbar -->
-        <div class="topbar d-flex justify-content-between align-items-center shadow-sm px-3 py-2 bg-light">
-            <form id="searchForm" class="d-flex w-50" method="get" action="@Url.Action("Search", "Home")">
-                <input type="text" name="query" id="searchQuery" class="form-control me-2" placeholder="Search Document..." />
-                <button class="btn btn-outline-primary fw-semibold" type="submit">Search</button>
-            </form>
+	<div class="d-flex flex-column full-height">
+		<!-- Topbar -->
+		<div class="topbar d-flex justify-content-between align-items-center shadow-sm px-4 py-2 bg-white border-bottom">
+			<!-- Logo và tên ứng dụng -->
+			<a href="@Url.Action("Index", "Home")" class="d-flex align-items-center text-decoration-none">
+				<img src="/images/logo.png" alt="Logo" style="height: 36px;" class="me-2" />
+				<h5 class="mb-0 fw-semibold" style="color:#01619A; font-size:1.5rem;">在線培訓系統</h5>
+			</a>
 
-            <div class="d-flex align-items-center">
-                <span class="me-3"><strong>@HttpContextAccessor.HttpContext.Session.GetString("UserName")</strong></span>
-                <form method="post" asp-controller="Home" asp-action="Logout">
-                    <button type="submit" class="btn btn-outline-danger btn-sm" style="background-color:#0d6efd; color:white; border-color:#0d6efd">Logout</button>
-                </form>
-            </div>
-        </div>
+			<!-- Tài khoản và Logout -->
+			<div class="d-flex align-items-center">
+				<span class="me-3 text-dark">
+					<i class="fas fa-user-circle me-1"></i> <strong>@HttpContextAccessor.HttpContext.Session.GetString("UserName") - @HttpContextAccessor.HttpContext.Session.GetString("UserId")</strong>
+				</span>
+			<form method="post" asp-controller="Home" asp-action="Logout" class="mb-0">
+				<button type="submit" class="btn btn-primary btn-sm">
+					<i class="fas fa-sign-out-alt"></i>
+				</button>
+			</form>
+
+			</div>
+		</div>
 
 
 
-        <!-- Main content -->
-        <div class="d-flex flex-grow-1">
+		<!-- Main content -->
+		<div class="d-flex flex-grow-1">
 
-@*             <!-- Sidebar -->
+			@*             <!-- Sidebar -->
             <div class="sidebar d-flex flex-column shadow-sm">
                 <h5 class="mb-3"><a href="@Url.Action("Index", "Home")"><i class="fas fa-folder-open me-2 text-warning"></i> Folder</a></h5>
 
@@ -142,36 +150,38 @@
                 </div>
             </div> *@
 
-            <!-- Sidebar -->
-            <div class="sidebar d-flex flex-column shadow-sm">
-                @await Html.PartialAsync("_FolderSidebar")
-            </div>
+			<!-- Sidebar -->
+			<div class="sidebar d-flex flex-column shadow-sm">
+				@await Html.PartialAsync("_FolderSidebar")
+			</div>
 
-            <!-- Body Content -->
-            <div class="content">
-                @RenderBody()
-            </div>
-        </div>
-    </div>
-    <!-- jQuery CDN -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+			<!-- Body Content -->
+			<div class="content">
+				@RenderBody()
+			</div>
+		</div>
+	</div>
+	<!-- jQuery CDN -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Optional: Bootstrap JS nếu bạn dùng Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- Optional: Bootstrap JS nếu bạn dùng Bootstrap -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    @RenderSection("Scripts", required: false)
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("searchForm");
-            form.addEventListener("submit", function (e) {
-                const query = document.getElementById("searchQuery").value.trim();
-                if (query === "") {
-                    e.preventDefault();
-                    alert("Please enter a search keyword.");
-                }
-            });
-        });
-    </script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const form = document.getElementById("searchForm");
+			form.addEventListener("submit", function (e) {
+				const query = document.getElementById("searchQuery").value.trim();
+				if (query === "") {
+					e.preventDefault();
+					alert("Please enter a search keyword.");
+				}
+			});
+		});
+	</script>
+	<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+	@RenderSection("Scripts", required: false)
 </body>
 </html>

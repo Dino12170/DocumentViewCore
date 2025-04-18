@@ -25,7 +25,7 @@ namespace DocumentViewCore
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddControllersWithViews(); 
+            services.AddControllersWithViews();
             services.AddHttpContextAccessor();
 
             // Thêm cache và session

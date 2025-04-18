@@ -65,36 +65,45 @@
 <body>
     <div class="container mt-4">
         <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-white p-3 rounded shadow-sm">
-                <li class="breadcrumb-item">
-                    <a href="@Url.Action("Index", "Home")"><i class="fas fa-home"></i> Folder</a>
-                </li>
+        <nav aria-label="breadcrumb" class="mb-3 bg-white rounded shadow-sm">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <!-- Breadcrumb -->
+                <ol class="breadcrumb p-3 mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="@Url.Action("Index", "Home")"><i class="fas fa-home"></i> 課程管理</a>
+                    </li>
 
-                @{
-                    var segments = currentFolder.Split('/', StringSplitOptions.RemoveEmptyEntries);
-                    var path = "";
+                    @{
+                        var segments = currentFolder.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                        var path = "";
 
-                    for (int i = 0; i < segments.Length; i++)
-                    {
-                        var segment = segments[i];
-                        path += (i > 0 ? "/" : "") + segment;
-                        var isLast = i == segments.Length - 1;
-
-                        if (isLast)
+                        for (int i = 0; i < segments.Length; i++)
                         {
-                            <li class="breadcrumb-item active" aria-current="page">@segment</li>
-                        }
-                        else
-                        {
-                            <li class="breadcrumb-item">
-                                <a href="@Url.Action("ListFiles", "Home", new { folderName = path })">@segment</a>
-                            </li>
+                            var segment = segments[i];
+                            path += (i > 0 ? "/" : "") + segment;
+                            var isLast = i == segments.Length - 1;
+
+                            if (isLast)
+                            {
+                                <li class="breadcrumb-item active" aria-current="page">@segment</li>
+                            }
+                            else
+                            {
+                                <li class="breadcrumb-item">
+                                    <a href="@Url.Action("ListFiles", "Home", new { folderName = path })">@segment</a>
+                                </li>
+                            }
                         }
                     }
-                }
-            </ol>
+                </ol>
+
+                <!-- Search Form -->
+                <form id="searchForm" class="d-flex" method="get" action="@Url.Action("Search", "Home")">
+                    <input type="text" name="query" id="searchQuery" class="form-control me-2" placeholder="🔍 Search Document..." />
+                </form>
+            </div>
         </nav>
+
 
         <!-- Folder cards -->
         <div class="row mt-4">
@@ -125,3 +134,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+@section Scripts {
+    <script>
+        document.getElementById('searchQuery').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Ngăn mặc định (tránh reload nếu form trống)
+                document.getElementById('searchForm').submit();
+            }
+        });
+    </script>
+}

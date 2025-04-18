@@ -41,6 +41,17 @@ namespace DocumentViewCore.Controllers
                 ViewBag.userID = HttpContext.Session.GetString("UserId");
                 var folders = Directory.GetDirectories(uploadPathFolder).Select(Path.GetFileName).ToList();
                 ViewBag.Folders = folders;
+                // Tạo dictionary chứa các thư mục con tương ứng từng top folder
+                var subfoldersMap = new Dictionary<string, List<string>>();
+                foreach (var folder in folders)
+                {
+                    var subPath = Path.Combine(uploadPathFolder, folder);
+                    var children = Directory.GetDirectories(subPath)
+                        .Select(Path.GetFileName)
+                        .ToList();
+                    subfoldersMap[folder] = children;
+                }
+                ViewBag.SubfoldersMap = subfoldersMap;
 
                 return View();
             }
@@ -288,10 +299,19 @@ namespace DocumentViewCore.Controllers
                 .Select(Path.GetFileName)
                 .ToList();
             ViewBag.Folders = topFolders;
-
+            // Tạo dictionary chứa các thư mục con tương ứng từng top folder
+            var subfoldersMap = new Dictionary<string, List<string>>();
+            foreach (var folder in topFolders)
+            {
+                var subPath = Path.Combine(uploadRootPath, folder);
+                var children = Directory.GetDirectories(subPath)
+                    .Select(Path.GetFileName)
+                    .ToList();
+                subfoldersMap[folder] = children;
+            }
+            ViewBag.SubfoldersMap = subfoldersMap;
             return View();
         }
-
 
         [HttpGet]
         public IActionResult Search(string query)
