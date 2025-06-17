@@ -171,7 +171,7 @@ namespace DocumentViewCore.Controllers
                         if (MSReader.Read())
                         {
                             string connectionString = @"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = 10.5.1.53)(PORT = 1621))(CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME =ERPDW)));Password= vnhr$2819Hp;User ID=hcp;";
-                            string sqlinfo = string.Format(@"select emp_no,emp_name,dept_name from VN_EAS_EMP_V where emp_no='{0}'", userid);
+                            string sqlinfo = string.Format(@"select emp_no,emp_name,dept_name, dept_no from VN_EAS_EMP_V where emp_no='{0}'", userid);
                             using (OracleConnection conn = new OracleConnection(connectionString))
                             {
                                 conn.Open();
@@ -185,6 +185,7 @@ namespace DocumentViewCore.Controllers
                                             HttpContext.Session.SetString("UserId", userid.ToString());
                                             HttpContext.Session.SetString("UserName", reader["emp_name"].ToString());
                                             HttpContext.Session.SetString("DepName", reader["dept_name"].ToString());
+                                            HttpContext.Session.SetString("DepNo", reader["dept_no"].ToString());
                                             dept = reader["dept_name"].ToString();
                                         }
                                     }
