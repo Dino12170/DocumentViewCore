@@ -25,7 +25,6 @@ namespace DocumentViewCore
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddControllersWithViews();
             services.AddHttpContextAccessor();
 
             // Thêm cache và session
@@ -80,7 +79,8 @@ namespace DocumentViewCore
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Login}/{id?}");
-            });
+                    //pattern: "{controller=MaintainData}/{action=MaintainDataView}");
+        });
         }
     }
 }

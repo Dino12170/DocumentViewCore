@@ -16,6 +16,9 @@ namespace DocumentViewCore
         //vd: dotnet run --urls "http://localhost:5000" -> args sẽ chứa "http://localhost:5000"
         //sử dụng args để cấu hình ứng dụng, ví dụ như cấu hình môi trường, địa chỉ URL, cổng, ... (để cho phép người dùng tùy chỉnh hành vi khởi động của ứng dụng thông qua dòng lệnh)
         //nếu không truyền giá trị gì vào thì args sẽ là một mảng rỗng string[0]="";
+        //@Html.Raw(JsonConvert.SerializeObject(Model.ChartData.Select(d => d.Date)))
+        //@Html.Raw(JsonConvert.SerializeObject(Model.ChartData.Select(d => d.Close)))
+        //@Html.Raw(JsonConvert.SerializeObject(Model.ChartData.Select(d => d.Open)))
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();

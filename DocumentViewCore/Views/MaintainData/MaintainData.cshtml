@@ -1,0 +1,122 @@
+﻿@{
+	ViewData["Title"] = "Maintain Data";
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+
+@{
+	var weekFormatted = $"25"; // ví dụ: 2524EE
+}
+<div class="d-flex w-100">
+	<div id="div1" class="me-2" style="flex: 0.5; border: 1px solid #ccc; padding: 10px;">
+		<form asp-action="MaintainWeekExpectTime" asp-controller="MaintainData" method="post" enctype="multipart/form-data" onsubmit="disableUIOnSubmit(this)">
+			<div class="row g-3 align-items-end">
+				<div class="col-md-4">
+					<label class="form-label fw-semibold">Week</label>
+					<input type="text" class="form-control" name="Week" id="weekInput" value="@weekFormatted" required readonly/>
+				</div>
+				<div class="col-md-4">
+					<label class="form-label fw-semibold">Expect Time</label>
+					<input type="text" class="form-control" name="ExpectTime" id="expectTimeInput" placeholder="Insert Time" required />
+				</div>
+				<div class="col-md-4 d-flex justify-content-start">
+					<button type="submit" class="btn btn-primary mt-2">
+						<i class="fas fa-paper-plane me-1"></i> Submit
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div id="div2" class="ms-2" style="flex: 1.5; border: 1px solid #ccc; padding: 10px;">
+		<form asp-action="MaintainImportantLession" asp-controller="MaintainData" method="post" enctype="multipart/form-data" onsubmit="disableUIOnSubmit(this)">
+			<div class="d-flex align-items-end">
+				<div class="me-3 flex-grow-1">
+					<label class="form-label fw-semibold">Choose File Excel contain Important Lessons</label>
+					<input type="file" name="file" class="form-control" required accept=".xls,.xlsx" />
+				</div>
+				<button type="submit" class="btn btn-primary mt-2">
+					<i class="fas fa-paper-plane me-1"></i> Submit
+				</button>
+			</div>
+		</form>
+	</div>
+</div>
+<br />
+<div style="border: 1px solid #ccc; padding: 10px;">
+	<form asp-action="MaintainLession" asp-controller="MaintainData" method="post" enctype="multipart/form-data" onsubmit="disableUIOnSubmit(this)">
+		<div class="row g-3">
+			<div class="col-md-6">
+				<label class="form-label fw-semibold">Lesson Name</label>
+				<input type="text" class="form-control" name="LessonName" placeholder="Enter lesson name..." required />
+			</div>
+			<div class="col-md-6">
+				<label class="form-label fw-semibold">Instructor</label>
+				<input type="text" class="form-control" name="Instructor" placeholder="Enter instructor name..." required />
+			</div>
+
+			<div class="col-md-6">
+				<label class="form-label fw-semibold">Start Time</label>
+				<input type="text" id="startTimePicker" class="form-control" name="StartTime" placeholder="Select Start Time" required />
+			</div>
+			<div class="col-md-6">
+				<label class="form-label fw-semibold">End Time</label>
+				<input type="text" id="endTimePicker" class="form-control" name="EndTime" placeholder="Select End Time" required />
+			</div>
+
+			<div class="col-12">
+				<label class="form-label fw-semibold">Participants</label>
+				<textarea class="form-control" name="Participants" rows="4" placeholder="Enter participant names..."></textarea>
+			</div>
+
+			<div class="col-12 text-end">
+				<button type="submit" class="btn btn-primary mt-2">
+					<i class="fas fa-paper-plane me-1"></i> Submit
+				</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+@section Scripts {
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const st = document.getElementById('startTimePicker');
+			if (st) {
+				flatpickr(st, {
+					enableTime: true,
+					time_24hr: true,
+					dateFormat: "Y-m-d H:i",
+				});
+			}
+			const et = document.getElementById('endTimePicker');
+			if (et) {
+				flatpickr(et, {
+					enableTime: true,
+					time_24hr: true,
+					dateFormat: "Y-m-d H:i",
+				});
+			}
+
+		const weekInput = document.getElementById("weekInput");
+
+		const today = new Date();
+
+		function getOracleWeekNumber(date) {
+			const startOfYear = new Date(date.getFullYear(), 0, 1); // Jan 1
+			const diffInMs = date - startOfYear;
+			const diffInDays = Math.floor(diffInMs / (24 * 60 * 60 * 1000));
+			return Math.floor(diffInDays / 7) + 1;
+		}
+
+		const year = today.getFullYear().toString().slice(-2); // 25
+		const week = getOracleWeekNumber(today).toString().padStart(2, '0'); // 24
+		weekInput.value = `${year}${week}`; // 2524
+		});
+	</script>
+}
